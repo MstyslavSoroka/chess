@@ -1,6 +1,19 @@
+#include "render.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
+#include <SDL2/SDL_timer.h>
+#include <SDL2/SDL_video.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+
+#define W 640
+#define H 640
+bool app_running = true;
 
 typedef uint64_t ui64;
 
@@ -40,6 +53,29 @@ int main() {
   ui64 empty = ~occupied;
 
   print_bitboard(white_king);
+
+  SDL_Init(SDL_INIT_VIDEO);
+  SDL_Window *pwindow = SDL_CreateWindow("Chess", SDL_WINDOWPOS_CENTERED,
+                                         SDL_WINDOWPOS_CENTERED, W, H, 0);
+
+  SDL_Renderer *renderer =
+      SDL_CreateRenderer(pwindow, -1, SDL_RENDERER_ACCELERATED);
+
+  while (app_running) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+      switch (event.type) {
+      case SDL_QUIT:
+        app_running = false;
+        break;
+      }
+    }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    renderBoard(renderer);
+    SDL_RenderPresent(renderer);
+    SDL_Delay(10);
+  }
 
   return 0;
 }
