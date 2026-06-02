@@ -6,29 +6,31 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_timer.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_video.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 
-#define W 640
+#define W 1000
 #define H 640
 bool app_running = true;
+TTF_Font *Sans = NULL;
 
 typedef uint64_t ui64;
 
 #define get_bit(bitboard, index) (((bitboard >> index)) & 1ULL)
 
-ui64 black_knights = 0x4200000000000000ULL; // init black pieces
+ui64 black_pawns = 0x00FF000000000000ULL;
 ui64 black_rooks = 0x8100000000000000ULL;
-ui64 black_pawns = 0x00FF0000000000ULL;
+ui64 black_knights = 0x4200000000000000ULL;
 ui64 black_bishops = 0x2400000000000000ULL;
-ui64 black_queens = 0x8000000000000000ULL;
+ui64 black_queens = 0x0800000000000000ULL;
 ui64 black_king = 0x1000000000000000ULL;
 
-ui64 white_knights = 0x0000000000000042ULL; // init white white pieces
+ui64 white_pawns = 0x000000000000FF00ULL;
 ui64 white_rooks = 0x0000000000000081ULL;
-ui64 white_pawns = 0x0000000000FF00ULL;
+ui64 white_knights = 0x0000000000000042ULL;
 ui64 white_bishops = 0x0000000000000024ULL;
 ui64 white_queens = 0x0000000000000008ULL;
 ui64 white_king = 0x0000000000000010ULL;
@@ -54,6 +56,10 @@ int main() {
 
   print_bitboard(white_king);
 
+  if (TTF_Init() == -1) {
+    printf("TTF_Init failed: %s\n", TTF_GetError());
+  }
+  Sans = TTF_OpenFont("opensans.ttf", 24);
   SDL_Init(SDL_INIT_VIDEO);
   SDL_Window *pwindow = SDL_CreateWindow("Chess", SDL_WINDOWPOS_CENTERED,
                                          SDL_WINDOWPOS_CENTERED, W, H, 0);
