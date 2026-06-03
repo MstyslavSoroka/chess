@@ -74,13 +74,20 @@ int main() {
       case SDL_QUIT:
         app_running = false;
         break;
+      case SDL_MOUSEBUTTONDOWN:
+        if (event.button.button == 1) {
+          printf("LMB at x: %f y: %f\n", ceil(event.button.x / 80) + 1,
+                 ceil(event.button.y / 80) + 1);
+        }
+
+        break;
       }
     }
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     renderBoard(renderer);
     SDL_RenderPresent(renderer);
-    SDL_Delay(10);
+    SDL_Delay(50);
   }
 
   return 0;
