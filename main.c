@@ -51,6 +51,8 @@ int main() {
   ui64 black_pieces = black_knights | black_bishops | black_pawns |
                       black_queens | black_rooks | black_king;
 
+  char boardNotation[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+
   ui64 occupied = white_pieces | black_pieces;
   ui64 empty = ~occupied;
 
@@ -75,9 +77,10 @@ int main() {
         app_running = false;
         break;
       case SDL_MOUSEBUTTONDOWN:
-        if (event.button.button == 1) {
-          printf("LMB at x: %f y: %f\n", ceil(event.button.x / 80) + 1,
-                 ceil(event.button.y / 80) + 1);
+        if (event.button.button == 1 && event.button.x < 640) {
+          printf("LMB at %c%d\n",
+                 *(boardNotation + (int)ceil(event.button.x / 80)),
+                 7 - (int)ceil(event.button.y / 80) + 1);
         }
 
         break;

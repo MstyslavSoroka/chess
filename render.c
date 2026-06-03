@@ -1,5 +1,6 @@
 #include "render.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_ttf.h>
@@ -27,54 +28,46 @@ void drawBase(SDL_Renderer *renderer) {
   }
 }
 
-void drawPieces(SDL_Renderer *renderer, ui64 bitboard, pieceName_t pieceName) {
+void drawPieces(SDL_Renderer *renderer, ui64 bitboard, pieceName_t pieceName,
+                char *color) {
 
-  SDL_Color White = {255, 255, 255};
   while (bitboard) {
     int square = __builtin_ctzll(bitboard);
     int x = square % 8;
     int y = square / 8;
 
-    SDL_Rect messageRect = {x * tileSize, y * tileSize, tileSize, tileSize};
-    char *name = "";
+    SDL_Rect dst = {x * tileSize, (7 - y) * tileSize, tileSize, tileSize};
+
+    const char *name = "";
     switch (pieceName) {
     case PAWN:
       name = "PAWN";
-      // printf("Drew a pawn");
       break;
     case BISHOP:
       name = "BISHOP";
       break;
-
     case KNIGHT:
-
       name = "KNIGHT";
-
       break;
-
     case ROOK:
       name = "ROOK";
-
       break;
-
     case QUEEN:
       name = "QUEEN";
-
       break;
-
     case KING:
       name = "KING";
       break;
     }
 
-    SDL_Surface *surfaceMessage = TTF_RenderText_Solid(Sans, name, White);
+    char path[128];
+    snprintf(path, sizeof(path), "./pieces/%s_%s.png", name, color);
 
-    SDL_Texture *Message =
-        SDL_CreateTextureFromSurface(renderer, surfaceMessage);
-    SDL_RenderCopy(renderer, Message, NULL, &messageRect);
+    SDL_Texture *tex = IMG_LoadTexture(renderer, path);
+    SDL_RenderCopy(renderer, tex, NULL, &dst);
+
     bitboard &= bitboard - 1;
-    SDL_FreeSurface(surfaceMessage);
-    SDL_DestroyTexture(Message);
+    SDL_DestroyTexture(tex);
   }
 }
 
@@ -82,19 +75,19 @@ int renderBoard(SDL_Renderer *renderer) {
 
   drawBase(renderer);
 
-  drawPieces(renderer, white_pawns, PAWN);
-  drawPieces(renderer, white_knights, KNIGHT);
-  drawPieces(renderer, white_bishops, BISHOP);
-  drawPieces(renderer, white_rooks, ROOK);
-  drawPieces(renderer, white_queens, QUEEN);
-  drawPieces(renderer, white_king, KING);
+  drawPieces(renderer, white_pawns, PAWN, "white");
+  drawPieces(renderer, white_knights, KNIGHT, "white");
+  drawPieces(renderer, white_bishops, BISHOP, "white");
+  drawPieces(renderer, white_rooks, ROOK, "white");
+  drawPieces(renderer, white_queens, QUEEN, "white");
+  drawPieces(renderer, white_king, KING, "white");
 
-  drawPieces(renderer, black_pawns, PAWN);
-  drawPieces(renderer, black_knights, KNIGHT);
-  drawPieces(renderer, black_bishops, BISHOP);
-  drawPieces(renderer, black_rooks, ROOK);
-  drawPieces(renderer, black_queens, QUEEN);
-  drawPieces(renderer, black_king, KING);
+  drawPieces(renderer, black_pawns, PAWN, "black");
+  drawPieces(renderer, black_knights, KNIGHT, "black");
+  drawPieces(renderer, black_bishops, BISHOP, "black");
+  drawPieces(renderer, black_rooks, ROOK, "black");
+  drawPieces(renderer, black_queens, QUEEN, "black");
+  drawPieces(renderer, black_king, KING, "black");
 
   return 0;
 }
