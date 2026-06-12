@@ -4,13 +4,32 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_ttf.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 #define tileSize 80
 
 typedef uint64_t ui64;
+static int selectedSquare = -1;
+
+bool pieceSelected = false;
 
 typedef enum pieceName { PAWN, BISHOP, KNIGHT, ROOK, QUEEN, KING } pieceName_t;
+char boardNotation[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+
+ui64 *bitboards[] = {&white_pawns, &white_knights, &white_bishops,
+                     &white_rooks, &white_queens,  &white_king,
+                     &black_pawns, &black_knights, &black_bishops,
+                     &black_rooks, &black_queens,  &black_king};
+
+int squareToBit(char *square) {
+  char file = square[0];
+  char rank = square[1];
+
+  int fileIndex = file - 'a';
+  int rankIndex = rank - '1';
+  return rankIndex * 8 + fileIndex;
+}
 
 void drawBase(SDL_Renderer *renderer) {
   for (int y = 0; y < 8; y++) {
@@ -26,6 +45,40 @@ void drawBase(SDL_Renderer *renderer) {
       SDL_RenderFillRect(renderer, &rect);
     }
   }
+}
+
+void movePiece(SDL_Event event) {
+  ui64 white_pieces = white_knights | white_bishops | white_pawns |
+                      white_queens | white_rooks | white_king;
+  ui64 black_pieces = black_knights | black_bishops | black_pawns |
+                      black_queens | black_rooks | black_king;
+  ui64 occupied = white_pieces | black_pieces;
+
+  char notation[16];
+  snprintf(notation, sizeof(notation), "%c%d",
+           *(boardNotation + (int)ceil(event.button.x / 80)),
+           7 - (int)ceil(event.button.y / 80) + 1);
+  int bit = squareToBit(notation);
+
+  if (!pieceSelected) {
+    selectedSquare = bit;
+    pieceSelected = true;
+  } else {
+    for (int i = 0; i < 12; i++) {
+      if (get_bit(*bitboards[i], selectedSquare)) {
+        pop_bit(*bitboards[i], selectedSquare);
+        set_bit(*bitboards[i], bit);
+        break;
+      }
+    }
+
+    selectedSquare = -1;
+    pieceSelected = false;
+  }
+
+  printf("%s\n", notation);
+
+  printf("%d\n", bit);
 }
 
 void drawPieces(SDL_Renderer *renderer, ui64 bitboard, pieceName_t pieceName,

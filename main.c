@@ -19,8 +19,6 @@ TTF_Font *Sans = NULL;
 
 typedef uint64_t ui64;
 
-#define get_bit(bitboard, index) (((bitboard >> index)) & 1ULL)
-
 ui64 black_pawns = 0x00FF000000000000ULL;
 ui64 black_rooks = 0x8100000000000000ULL;
 ui64 black_knights = 0x4200000000000000ULL;
@@ -46,15 +44,6 @@ void print_bitboard(ui64 bitboard) {
 }
 
 int main() {
-  ui64 white_pieces = white_knights | white_bishops | white_pawns |
-                      white_queens | white_rooks | white_king;
-  ui64 black_pieces = black_knights | black_bishops | black_pawns |
-                      black_queens | black_rooks | black_king;
-
-  char boardNotation[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
-
-  ui64 occupied = white_pieces | black_pieces;
-  ui64 empty = ~occupied;
 
   print_bitboard(white_king);
 
@@ -78,9 +67,7 @@ int main() {
         break;
       case SDL_MOUSEBUTTONDOWN:
         if (event.button.button == 1 && event.button.x < 640) {
-          printf("LMB at %c%d\n",
-                 *(boardNotation + (int)ceil(event.button.x / 80)),
-                 7 - (int)ceil(event.button.y / 80) + 1);
+          movePiece(event);
         }
 
         break;
