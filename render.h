@@ -1,33 +1,34 @@
 #pragma once
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
+#include <stdint.h>
 
-typedef uint64_t u64;
+typedef uint64_t ui64;
 
-extern u64 white_pawns;
-extern u64 white_knights;
-extern u64 white_bishops;
-extern u64 white_rooks;
-extern u64 white_queens;
-extern u64 white_king;
+typedef enum pieceName { PAWN, BISHOP, KNIGHT, ROOK, QUEEN, KING } pieceName_t;
 
-extern u64 black_pawns;
-extern u64 black_knights;
-extern u64 black_bishops;
-extern u64 black_rooks;
-extern u64 black_queens;
-extern u64 black_king;
-extern u64 white_pieces;
-extern u64 black_pieces;
+extern ui64 white_pawns;
+extern ui64 white_knights;
+extern ui64 white_bishops;
+extern ui64 white_rooks;
+extern ui64 white_queens;
+extern ui64 white_king;
 
-extern u64 occupied;
-extern u64 empty;
+extern ui64 black_pawns;
+extern ui64 black_knights;
+extern ui64 black_bishops;
+extern ui64 black_rooks;
+extern ui64 black_queens;
+extern ui64 black_king;
+
+extern ui64 legalMoves;
 
 extern TTF_Font *Sans;
 
-#define get_bit(bitboard, index) (((bitboard >> index)) & 1ULL)
-#define set_bit(bitboard, index) ((bitboard) |= (1ULL << (index)))
-#define pop_bit(bitboard, index) ((bitboard) &= ~(1ULL << (index)))
+#define get_bit(bb, idx) (((bb) >> (idx)) & 1ULL)
+#define set_bit(bb, idx) ((bb) |= (1ULL << (idx)))
+#define pop_bit(bb, idx) ((bb) &= ~(1ULL << (idx)))
 
 void movePiece(SDL_Event event);
 int renderBoard(SDL_Renderer *renderer);
+int squareToBit(char *square);
