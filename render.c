@@ -17,10 +17,20 @@ bool pieceSelected = false;
 typedef enum pieceName { PAWN, BISHOP, KNIGHT, ROOK, QUEEN, KING } pieceName_t;
 char boardNotation[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
 
+ui64 legalMoves = 0x0ULL;
 ui64 *bitboards[] = {&white_pawns, &white_knights, &white_bishops,
                      &white_rooks, &white_queens,  &white_king,
                      &black_pawns, &black_knights, &black_bishops,
                      &black_rooks, &black_queens,  &black_king};
+
+ui64 getLegalMoves(int pieceIndex, int curSquare, ui64 occupied) {
+
+  switch (pieceIndex) {
+  case 1:
+    break;
+  }
+  return 0;
+}
 
 int squareToBit(char *square) {
   char file = square[0];
@@ -34,6 +44,12 @@ int squareToBit(char *square) {
 void drawBase(SDL_Renderer *renderer) {
   for (int y = 0; y < 8; y++) {
     for (int x = 0; x < 8; x++) {
+      int tile = (7 - y) * 8 + x;
+      if (get_bit(legalMoves, tile)) {
+        SDL_Rect rect = {x * tileSize, y * tileSize, tileSize - 10,
+                         tileSize - 10};
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+      }
       SDL_Rect rect = {x * tileSize, y * tileSize, tileSize, tileSize};
       SDL_SetRenderDrawColor(renderer, 118, 150, 86,
                              255); // dark color green
