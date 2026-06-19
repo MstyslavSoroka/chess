@@ -1,0 +1,11 @@
+# Object files
+*.o
+
+# Optional: compiled binaries (you may or may not want this)
+chess
+main
+
+# Editor/temp files (optional but common)
+*.swp
+*.swo
+*~
