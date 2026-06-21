@@ -22,6 +22,7 @@ extern ui64 black_queens;
 extern ui64 black_king;
 
 extern ui64 legalMoves;
+extern ui64 knightMoves[64];
 
 extern TTF_Font *Sans;
 

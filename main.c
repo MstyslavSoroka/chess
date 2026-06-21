@@ -17,6 +17,30 @@
 #define H 640
 bool app_running = true;
 TTF_Font *Sans = NULL;
+ui64 knightMoves[64];
+
+void initKnight(ui64 knightMoves[64]) {
+  int offsets[8][2] = {{2, 1}, {2, -1}, {-2, 1}, {-2, -1},
+                       {1, 2}, {1, -2}, {-1, 2}, {-1, -2}};
+
+  for (int sq = 0; sq < 64; sq++) {
+    ui64 attacks = 0ULL;
+
+    int rank = sq / 8;
+    int file = sq % 8;
+
+    for (int k = 0; k < 8; k++) {
+      int r = rank + offsets[k][1];
+      int f = file + offsets[k][0];
+
+      if (r >= 0 && r < 8 && f >= 0 && f < 8) {
+        set_bit(attacks, r * 8 + f);
+      }
+    }
+
+    knightMoves[sq] = attacks;
+  }
+}
 
 void print_bitboard(ui64 bitboard) {
   for (int y = 7; y >= 0; y--) {
@@ -31,7 +55,7 @@ void print_bitboard(ui64 bitboard) {
 int main() {
 
   print_bitboard(white_king);
-
+  initKnight(knightMoves);
   if (TTF_Init() == -1) {
     printf("TTF_Init failed: %s\n", TTF_GetError());
   }
